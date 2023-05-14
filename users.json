@@ -1,0 +1,47 @@
+[
+  {
+    "login": "Quper",
+    "password": "147258369Qq",
+    "id": "e97fdd7a-b32f-498b-86b5-6683e808fd1c",
+    "wish": {
+      "Одежда": [
+        {
+          "id": "ea73765a-5c80-4ec6-9cc3-f6cc1d888ca5",
+          "title": "Брюки",
+          "link": "http://goo.ru",
+          "price": "8500",
+          "image": "/image/ea73765a-5c80-4ec6-9cc3-f6cc1d888ca5.png"
+        },
+        {
+          "id": "90a5c245-11b7-4e23-a1ce-ca5b3efc34ee",
+          "title": "Кросы",
+          "link": "http://ozon.ru",
+          "price": "12500",
+          "image": "/image/90a5c245-11b7-4e23-a1ce-ca5b3efc34ee.jpg"
+        },
+        {
+          "id": "0e1bb064-640a-4c04-9da5-c3ec5aba8578",
+          "title": "Пиксельная кофта",
+          "link": "http://test.com",
+          "price": "15000",
+          "image": "/image/0e1bb064-640a-4c04-9da5-c3ec5aba8578.jpg"
+        }
+      ],
+      "Гаджеты": [
+        {
+          "id": "d0344e0c-7b1c-4428-99c9-d63f5fb55b0e",
+          "title": "Xiaomi",
+          "link": "https://xiaomi.com",
+          "price": "45254",
+          "image": "/image/d0344e0c-7b1c-4428-99c9-d63f5fb55b0e.jpg"
+        }
+      ]
+    }
+  },
+  {
+    "login": "Testirovich",
+    "password": "987654321Qq!",
+    "id": "fb6390ba-50ad-4520-b7f1-0d3d4410cd22",
+    "wish": {}
+  }
+]

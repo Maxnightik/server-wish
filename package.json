@@ -1,0 +1,14 @@
+{
+  "name": "server-wish",
+  "version": "1.0.0",
+  "description": "API server server-wish",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.0",
+    "uuid": "^9.0.0"
+  }
+}
