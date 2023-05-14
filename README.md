@@ -35,6 +35,7 @@ API предоставляет следующие конечные точки:
 ## Зависимости
 * <span style="color:Olive">uuid</span>
 * <span style="color:Olive">jsonwebtoken</span>
+* <span style="color:Olive">dotenv</span>
 
 ## Будет доработано
 * Валидация получаемых данных
