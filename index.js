@@ -5,8 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const PORT = 3000;
 const DATA_FILE_PATH = './users.json';
-const JWT_SECRET =
-  'a82ac686755e942e90b228f8ef257b5edcfd17677997452dafce68e94496976d';
+const JWT_SECRET = 'a82ac686755e942e90b228f8ef257b5edcfd17677997452dafce68e94496976d';
 
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
