@@ -10,6 +10,27 @@ const PORT = 3000;
 const DATA_FILE_PATH = './users.json';
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Проверка наличия файла и создание, если его нет
+async function checkFileAvailability(filePath) {
+  try {
+    await fs.access(
+      filePath,
+      fs.constants.F_OK | fs.constants.R_OK | fs.constants.W_OK,
+    );
+    console.log('Файл доступен для чтения и записи');
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.log('Файл не существует. Создание нового файла...');
+      await fs.writeFile(filePath, '[]');
+      console.log('Файл создан успешно.');
+    } else {
+      console.log('Файл недоступен для чтения и записи.');
+    }
+  }
+}
+
+checkFileAvailability(DATA_FILE_PATH);
+
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -29,22 +50,42 @@ const server = http.createServer(async (req, res) => {
 
   if (req.url === '/register' && req.method === 'POST') {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       body += chunk.toString();
     });
     req.on('end', async () => {
-      const newUser = JSON.parse(body);
+      const { login, password } = JSON.parse(body);
+
+      // Проверка логина на наличие только символов латинского алфавита
+      const loginRegex = /^[a-zA-Z]+$/;
+      if (!loginRegex.test(login)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Invalid login format' }));
+        return;
+      }
+
+      // Проверка пароля на наличие латинских символов, цифр, больших букв и специальных символов
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!\"№;%:?*()_+])[a-zA-Z\d!\"№;%:?*()_+]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Invalid password format' }));
+        return;
+      }
+
       const users = await readUsersFile();
       if (
-        users.find(
-          (user) => user.login.toLowerCase() === newUser.login.toLowerCase(),
-        )
+        users.find(user => user.login.toLowerCase() === login.toLowerCase())
       ) {
         res.writeHead(409, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'User already exists' }));
       } else {
-        newUser.id = uuidv4();
-        newUser.wish = {};
+        const newUser = {
+          id: uuidv4(),
+          login,
+          password,
+          wish: {},
+        };
         users.push(newUser);
         await saveUsersFile(users);
         res.writeHead(201, { 'Content-Type': 'application/json' });
@@ -53,14 +94,14 @@ const server = http.createServer(async (req, res) => {
     });
   } else if (req.url === '/login' && req.method === 'POST') {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       body += chunk.toString();
     });
     req.on('end', async () => {
       const { login, password } = JSON.parse(body);
       const users = await readUsersFile();
       const user = users.find(
-        (user) =>
+        user =>
           user.login.toLowerCase() === login.toLowerCase() &&
           user.password === password,
       );
@@ -75,7 +116,7 @@ const server = http.createServer(async (req, res) => {
     });
   } else if (req.url === '/addWish' && req.method === 'POST') {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       body += chunk.toString();
     });
     req.on('end', async () => {
@@ -84,7 +125,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const { id } = jwt.verify(token, JWT_SECRET);
         const users = await readUsersFile();
-        const userIndex = users.findIndex((user) => user.id === id);
+        const userIndex = users.findIndex(user => user.id === id);
         if (userIndex < 0) {
           throw new Error('User not found');
         }
@@ -122,7 +163,7 @@ const server = http.createServer(async (req, res) => {
     const login = req.url.split('/')[2];
     const users = await readUsersFile();
     const user = users.find(
-      (user) => user.login.toLowerCase() === login.toLowerCase(),
+      user => user.login.toLowerCase() === login.toLowerCase(),
     );
     if (!user) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -131,6 +172,34 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(user.wish));
     }
+  } else if (req.url.startsWith('/wish/') && req.method === 'PUT') {
+    const id = req.url.split('/')[2];
+    const token = req.headers.authorization?.split(' ')[1];
+    try {
+      const { id: userId } = jwt.verify(token, JWT_SECRET);
+      console.log('userId: ', userId);
+      const users = await readUsersFile();
+      const user = users.find(user => user.id === userId);
+      if (!user) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'User not found' }));
+      } else {
+        const { category, ...updatedWish } = JSON.parse(body);
+        const wishToUpdate = user.wish[category].find(item => item.id === id);
+        if (!wishToUpdate) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Wish not found' }));
+        } else {
+          Object.assign(wishToUpdate, updatedWish);
+          await saveUsersFile(users);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Wish updated successfully' }));
+        }
+      }
+    } catch (err) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: err.message }));
+    }
   } else if (req.url.startsWith('/wish/') && req.method === 'GET') {
     const id = req.url.split('/')[2];
     const token = req.headers.authorization?.split(' ')[1];
@@ -138,16 +207,16 @@ const server = http.createServer(async (req, res) => {
       const { id: userId } = jwt.verify(token, JWT_SECRET);
       console.log('userId: ', userId);
       const users = await readUsersFile();
-      const user = users.find((user) => user.id === userId);
+      const user = users.find(user => user.id === userId);
       if (!user) {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'User not found' }));
       } else {
         const wish = user.wish;
         const item = Object.keys(wish)
-          .map((category) => wish[category])
+          .map(category => wish[category])
           .reduce((acc, cur) => acc.concat(cur), [])
-          .find((item) => item.id === id);
+          .find(item => item.id === id);
         if (!item) {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: 'Item not found' }));
@@ -167,7 +236,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 function readUsersFile() {
-  return fs.readFile(DATA_FILE_PATH, 'utf-8').then((data) => JSON.parse(data));
+  return fs.readFile(DATA_FILE_PATH, 'utf-8').then(data => JSON.parse(data));
 }
 
 function saveUsersFile(users) {
