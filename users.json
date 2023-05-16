@@ -43,5 +43,42 @@
     "password": "987654321Qq!",
     "id": "fb6390ba-50ad-4520-b7f1-0d3d4410cd22",
     "wish": {}
+  },
+  {
+    "id": "87b81987-e23a-4b9e-abf3-703b2157561d",
+    "login": "Maksim",
+    "password": "147852369Qq!",
+    "wish": {
+      "Еда": [
+        {
+          "id": "b1ebc5d3-a0aa-4d68-894c-99a2ad79a568",
+          "title": "Пицца пеперони",
+          "link": "https://dodopizza.ru/moscow/pizza/double-pepperoni",
+          "price": "900",
+          "image": "/image/b1ebc5d3-a0aa-4d68-894c-99a2ad79a568.jpg"
+        },
+        {
+          "id": "f855aee2-3e49-4a2d-98c5-b03acdd58b44",
+          "title": "Пицца пеперони",
+          "link": "https://dodopizza.ru/moscow/pizza/double-pepperoni",
+          "price": "900",
+          "image": "/image/f855aee2-3e49-4a2d-98c5-b03acdd58b44.jpg"
+        },
+        {
+          "id": "67fcfc60-a8b4-4629-9d29-8e66a8e32d58",
+          "title": "Пицца пеперони",
+          "link": "https://dodopizza.ru/moscow/pizza/double-pepperoni",
+          "price": "900",
+          "image": "/image/67fcfc60-a8b4-4629-9d29-8e66a8e32d58.jpg"
+        },
+        {
+          "id": "8b96f174-e6f8-46aa-9e50-bb5e34966d42",
+          "title": "Пицца пеперони",
+          "link": "https://dodopizza.ru/moscow/pizza/double-pepperoni",
+          "price": "900",
+          "image": "/image/8b96f174-e6f8-46aa-9e50-bb5e34966d42.jpg"
+        }
+      ]
+    }
   }
 ]
