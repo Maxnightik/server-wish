@@ -37,5 +37,3 @@ API предоставляет следующие конечные точки:
 * <span style="color:Olive">jsonwebtoken</span>
 * <span style="color:Olive">dotenv</span>
 
-## Будет доработано
-* Валидация получаемых данных

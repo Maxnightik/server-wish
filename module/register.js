@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { isValidLogin, isValidPassword } from './authValidation.js';
 import { readUsersFile, saveUsersFile } from './fileUtils.js';
+import { DATA_FOLDER_AVATAR } from './checkFilesAndFoldersAvailability.js';
 
 export const handleRegisterRequest = async (req, res) => {
   let body = '';
@@ -12,12 +13,21 @@ export const handleRegisterRequest = async (req, res) => {
 
     if (!isValidLogin(login)) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid login format' }));
+      res.end(
+        JSON.stringify({
+          message: 'Логин должен состоять только из латинских букв',
+        }),
+      );
       return;
     }
     if (!isValidPassword(password)) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid password format' }));
+      res.end(
+        JSON.stringify({
+          message:
+            'Пароль должен содержать как минимум одну строчную букву, одну заглавную букву, одну цифру, один специальный символ и иметь длину не менее 8 символов',
+        }),
+      );
       return;
     }
 
@@ -31,6 +41,8 @@ export const handleRegisterRequest = async (req, res) => {
         login,
         password,
         wish: {},
+        avatar: `${DATA_FOLDER_AVATAR}empty.jpg`,
+        birthdate: '',
       };
       users.push(newUser);
       await saveUsersFile(users);

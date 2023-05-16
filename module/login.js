@@ -1,6 +1,6 @@
-import { readUsersFile,  generateToken } from './fileUtils.js';
+import { readUsersFile, generateToken } from './fileUtils.js';
 
-export const  handleLoginRequest = async(req, res) => {
+export const handleLoginRequest = async (req, res) => {
   let body = '';
   req.on('data', chunk => {
     body += chunk.toString();
@@ -22,4 +22,4 @@ export const  handleLoginRequest = async(req, res) => {
       res.end(JSON.stringify({ token }));
     }
   });
-}
+};

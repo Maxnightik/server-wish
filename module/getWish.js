@@ -1,6 +1,6 @@
 import { readUsersFile, verifyToken } from './fileUtils.js';
 
-export async function handleGetWishRequest(req, res) {
+export const handleGetWishRequest = async (req, res) => {
   const id = req.url.split('/')[2];
   const token = req.headers.authorization?.split(' ')[1];
   try {
@@ -28,4 +28,4 @@ export async function handleGetWishRequest(req, res) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: err.message }));
   }
-}
+};

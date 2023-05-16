@@ -1,6 +1,6 @@
 import { readUsersFile } from './fileUtils.js';
 
-export async function handleWishlistRequest(req, res) {
+export const handleWishlistRequest = async (req, res) => {
   const login = req.url.split('/')[2];
   const users = await readUsersFile();
   const user = users.find(
@@ -10,7 +10,8 @@ export async function handleWishlistRequest(req, res) {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'User not found' }));
   } else {
+    const { password, ...userWithoutPassword } = user;
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(user.wish));
+    res.end(JSON.stringify(userWithoutPassword));
   }
-}
+};

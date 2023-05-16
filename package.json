@@ -5,11 +5,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index",
+    "dev": "nodemon index",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
     "jsonwebtoken": "^9.0.0",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.22",
+    "prettier": "2.8.6"
   }
 }
