@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_AVATAR } from './checkFilesAndFoldersAvailability.js';
+import sharp from 'sharp';
 const updateUser = async (user, id, login, password, birthdate, avatar) => {
   if (login) {
     user.login = login;
@@ -16,14 +17,25 @@ const updateUser = async (user, id, login, password, birthdate, avatar) => {
     if (!matches || matches.length !== 3) {
       throw new Error('Invalid image data URL');
     }
-    const extension = matches[1].replace('jpeg', 'jpg');
     const base64Data = matches[2];
-    await fs.writeFile(
-      `${DATA_FOLDER_AVATAR}${id}.${extension}`,
-      base64Data,
-      'base64',
-    );
-    user.avatar = `${DATA_FOLDER_AVATAR}${id}.${extension}`;
+
+    const MAX_IMAGE_SIZE = 500;
+
+    const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
+      .resize({ width: MAX_IMAGE_SIZE, height: MAX_IMAGE_SIZE, fit: 'contain' })
+      .background({ r: 255, g: 255, b: 255, alpha: 1 })
+      .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
+    const imageFilePath = `${DATA_FOLDER_AVATAR}${id}.jpg`;
+
+    try {
+      await fs.promises.writeFile(imageFilePath, processedImageBuffer);
+      user.avatar = imageFilePath;
+    } catch (error) {
+      throw new Error(`Error writing image file: ${error.message}`);
+    }
   }
 };
 

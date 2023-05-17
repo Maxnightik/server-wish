@@ -2,16 +2,46 @@ import fs from 'node:fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_IMAGES } from './checkFilesAndFoldersAvailability.js';
+import sharp from 'sharp';
 
 const saveImage = async image => {
   const matches = image.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
   if (!matches || matches.length !== 3) {
     throw new Error('Invalid image data URL');
   }
-  const extension = matches[1].replace('jpeg', 'jpg');
+
   const base64Data = matches[2];
-  const imageFilePath = `${DATA_FOLDER_IMAGES}${uuidv4()}.${extension}`;
-  await fs.writeFile(imageFilePath, base64Data, 'base64');
+
+  const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
+    .resize({ height: 500 })
+    .extend({
+      top: 0,
+      bottom: 0,
+      left: Math.round(
+        (500 -
+          500 *
+            (500 /
+              (
+                await sharp(Buffer.from(base64Data, 'base64')).metadata()
+              ).width)) /
+          2,
+      ),
+      right: Math.round(
+        (500 -
+          500 *
+            (500 /
+              (
+                await sharp(Buffer.from(base64Data, 'base64')).metadata()
+              ).width)) /
+          2,
+      ),
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .jpeg({ quality: 80 })
+    .toBuffer();
+
+  const imageFilePath = `${DATA_FOLDER_IMAGES}${uuidv4()}.jpg`;
+  await fs.writeFile(imageFilePath, processedImageBuffer);
   return imageFilePath;
 };
 
