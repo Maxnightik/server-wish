@@ -10,6 +10,7 @@ export const handleWishlistRequest = async (req, res) => {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'User not found' }));
   } else {
+    // eslint-disable-next-line
     const { password, ...userWithoutPassword } = user;
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(userWithoutPassword));

@@ -4,7 +4,7 @@ import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_IMAGES } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
 
-const saveImage = async image => {
+const saveImage = async (image, id) => {
   const matches = image.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
   if (!matches || matches.length !== 3) {
     throw new Error('Invalid image data URL');
@@ -12,35 +12,16 @@ const saveImage = async image => {
 
   const base64Data = matches[2];
 
+  const MAX_IMAGE_SIZE = 500;
+
   const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
-    .resize({ height: 500 })
-    .extend({
-      top: 0,
-      bottom: 0,
-      left: Math.round(
-        (500 -
-          500 *
-            (500 /
-              (
-                await sharp(Buffer.from(base64Data, 'base64')).metadata()
-              ).width)) /
-          2,
-      ),
-      right: Math.round(
-        (500 -
-          500 *
-            (500 /
-              (
-                await sharp(Buffer.from(base64Data, 'base64')).metadata()
-              ).width)) /
-          2,
-      ),
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
-    })
+    .resize({ width: MAX_IMAGE_SIZE, height: MAX_IMAGE_SIZE, fit: 'contain' })
+    .background({ r: 255, g: 255, b: 255, alpha: 1 })
+    .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .jpeg({ quality: 80 })
     .toBuffer();
 
-  const imageFilePath = `${DATA_FOLDER_IMAGES}${uuidv4()}.jpg`;
+  const imageFilePath = `${DATA_FOLDER_IMAGES}${id}.jpg`;
   await fs.writeFile(imageFilePath, processedImageBuffer);
   return imageFilePath;
 };
@@ -54,7 +35,7 @@ const addWishToUser = async (users, userIndex, category, wish) => {
     user.wish[category] = [newWish];
   }
   if (newWish.image) {
-    const imageFilePath = await saveImage(newWish.image);
+    const imageFilePath = await saveImage(newWish.image, newWish.id);
     newWish.image = imageFilePath;
   } else {
     newWish.image = `${DATA_FOLDER_IMAGES}empty-wish.jpg`;

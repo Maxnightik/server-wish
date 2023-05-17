@@ -25,6 +25,7 @@ export const handleRegisterRequest = async (req, res) => {
       res.end(
         JSON.stringify({
           message:
+            // eslint-disable-next-line
             'Пароль должен содержать как минимум одну строчную букву, одну заглавную букву, одну цифру, один специальный символ и иметь длину не менее 8 символов',
         }),
       );

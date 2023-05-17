@@ -31,6 +31,7 @@ const checkFolderAvailability = async folder => {
     console.log(`Папка ${folder} существует`);
   } catch (error) {
     console.log(
+      // eslint-disable-next-line
       `Папка ${folder} не существует или не доступна для записи. Создание новой папки...`,
     );
     try {
