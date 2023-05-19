@@ -1,4 +1,16 @@
 import { readUsersFile, generateToken } from './fileUtils.js';
+import { sendResponse } from './serviceResponse.js';
+
+/**
+ * Обрабатывает запрос на вход в систему, разбирая тело запроса
+ * на учетные данные для входаи пароль, чтение файла пользователей,
+ * поиск пользователя с соответствующими учетными данными и либо отправку ответа
+ * об ошибке, либо генерацию и отправку ответа с токеном.
+ *
+ * @param {Object} req - объект запроса
+ * @param {Object} res - объект ответа
+ * @return {Promise<void>} Promise, который разрешается, когда ответ отправлен
+ */
 
 export const handleLoginRequest = async (req, res) => {
   let body = '';
@@ -14,12 +26,10 @@ export const handleLoginRequest = async (req, res) => {
         user.password === password,
     );
     if (!user) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid credentials' }));
+      sendResponse(res, 401, { message: 'Invalid credentials' });
     } else {
       const token = generateToken(user.id);
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ token }));
+      sendResponse(res, 200, { token });
     }
   });
 };

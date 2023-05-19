@@ -1,4 +1,17 @@
 import { readUsersFile } from './fileUtils.js';
+import { sendResponse } from './serviceResponse.js';
+
+/**
+ * Обрабатывает запрос списка желаний, находя пользователя
+ * в файле пользователей по его логину.
+ *
+ * Если пользователь найден, отправляет его объект пользователя клиенту
+ * с удаленным полем пароля. Если пользователь не найден,
+ * отправляет ответ с ошибкой 404.
+ *
+ * @param {Object} req - Объект запроса.
+ * @param {Object} res - Объект ответа.
+ */
 
 export const handleWishlistRequest = async (req, res) => {
   const login = req.url.split('/')[2];
@@ -7,12 +20,10 @@ export const handleWishlistRequest = async (req, res) => {
     user => user.login.toLowerCase() === login.toLowerCase(),
   );
   if (!user) {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'User not found' }));
+    sendResponse(res, 404, { message: 'User not found' });
   } else {
     // eslint-disable-next-line
     const { password, ...userWithoutPassword } = user;
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(userWithoutPassword));
+    sendResponse(res, 200, userWithoutPassword);
   }
 };

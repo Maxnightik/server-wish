@@ -2,6 +2,24 @@ import fs from 'fs';
 import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_AVATAR } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
+import { sendResponse } from './serviceResponse.js';
+
+/**
+ * Асинхронно обновляет данные пользователя
+ *
+ * @async
+ * @function
+ *
+ * @param {Object} user - объект пользователя
+ * @param {string} id - идентификатор пользователя
+ * @param {string} [login] - логин пользователя
+ * @param {string} [password] - пароль пользователя
+ * @param {string} [birthdate] - дата рождения пользователя
+ * @param {string} [avatar] - аватар пользователя в формате base64
+ *
+ * @throws {Error} если переданное изображение в формате base64 некорректно
+ * @throws {Error} если произошла ошибка при записи изображения в файл
+ */
 const updateUser = async (user, id, login, password, birthdate, avatar) => {
   if (login) {
     user.login = login;
@@ -39,6 +57,15 @@ const updateUser = async (user, id, login, password, birthdate, avatar) => {
   }
 };
 
+/**
+ * Обрабатывает запрос на обновление данных пользователя
+ *
+ * @async
+ * @function
+ *
+ * @param {Object} req - объект запроса
+ * @param {Object} res - объект ответа
+ */
 export const handleUpdateUserRequest = async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
 
@@ -46,8 +73,7 @@ export const handleUpdateUserRequest = async (req, res) => {
   const users = await readUsersFile();
   const userIndex = users.findIndex(user => user.id === userId);
   if (userIndex === -1) {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'User not found' }));
+    sendResponse(res, 404, { message: 'User not found' });
   } else {
     const id = req.params.id;
     let body = '';
@@ -60,17 +86,13 @@ export const handleUpdateUserRequest = async (req, res) => {
       try {
         await updateUser(user, id, login, password, birthdate, avatar);
         await saveUsersFile(users);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(
-          JSON.stringify({
-            login: user.login,
-            birthdate: user.birthdate,
-            avatar: user.avatar,
-          }),
-        );
+        sendResponse(res, 200, {
+          login: user.login,
+          birthdate: user.birthdate,
+          avatar: user.avatar,
+        });
       } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: err.message }));
+        sendResponse(res, 400, { message: err.message });
       }
     });
   }

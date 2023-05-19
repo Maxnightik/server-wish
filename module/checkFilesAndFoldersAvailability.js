@@ -7,6 +7,10 @@ export const DATA_FOLDER_IMAGES = './images';
 export const DATA_FOLDER_AVATAR = './avatars';
 export const DATA_FOLDERS_PATH = [DATA_FOLDER_IMAGES, DATA_FOLDER_AVATAR];
 
+/**
+ * Проверяет доступность указанного файла и создает его, если его нет
+ * @param {string} filePath - путь к файлу
+ */
 const checkFileAvailability = async filePath => {
   try {
     await fs.access(
@@ -25,6 +29,10 @@ const checkFileAvailability = async filePath => {
   }
 };
 
+/**
+ * Проверяет доступность указанной папки и создает ее, если ее нет
+ * @param {string} folder - путь к папке
+ */
 const checkFolderAvailability = async folder => {
   try {
     await fs.access(folder, fs.constants.F_OK | fs.constants.W_OK);
@@ -43,5 +51,9 @@ const checkFolderAvailability = async folder => {
   }
 };
 
+/**
+ * Проверяет доступность всех файлов и папок, необходимых для работы приложения,
+ * и создает их, если они не существуют
+ */
 DATA_FILES_PATH.forEach(checkFileAvailability);
 DATA_FOLDERS_PATH.forEach(checkFolderAvailability);

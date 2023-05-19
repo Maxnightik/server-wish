@@ -3,7 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_IMAGES } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
+import { sendResponse } from './serviceResponse.js';
 
+/**
+ * Сохраняет изображение в формате base64 в файл и возвращает путь к файлу
+ * @param {string} image - изображение в формате base64
+ * @param {string} id - идентификатор изображения
+ * @returns {Promise<string>} - путь к сохраненному файлу
+ * @throws {Error} - если image не является допустимым 
+ * URL-адресом данных изображения
+ */
 const saveImage = async (image, id) => {
   const matches = image.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
   if (!matches || matches.length !== 3) {
@@ -26,6 +35,15 @@ const saveImage = async (image, id) => {
   return imageFilePath;
 };
 
+/**
+ * Добавляет новое желание в список желаний пользователя
+ * в соответствующей категории
+ * @param {Array} users - массив пользователей, в котором нужно добавить желание
+ * @param {number} userIndex - индекс пользователя в массиве
+ * @param {string} category - категория желания
+ * @param {Object} wish - объект желания
+ * @returns {Promise<Object>} - добавленное желание
+ */
 const addWishToUser = async (users, userIndex, category, wish) => {
   const newWish = { id: uuidv4(), ...wish };
   const user = users[userIndex];
@@ -44,6 +62,11 @@ const addWishToUser = async (users, userIndex, category, wish) => {
   return newWish;
 };
 
+/**
+ * Обрабатывает запрос на добавление нового желания
+ * @param {Object} req - объект запроса
+ * @param {Object} res - объект ответа
+ */
 export const handleAddWishRequest = (req, res) => {
   let body = '';
   req.on('data', chunk => {
@@ -60,11 +83,9 @@ export const handleAddWishRequest = (req, res) => {
         throw new Error('User not found');
       }
       const newWish = await addWishToUser(users, userIndex, category, wish);
-      res.writeHead(201, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ category, ...newWish }));
+      sendResponse(res, 201, { category, ...newWish });
     } catch (err) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: err.message }));
+      sendResponse(res, 401, { message: err.message });
     }
   });
 };

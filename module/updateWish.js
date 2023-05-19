@@ -2,7 +2,26 @@ import fs from 'node:fs/promises';
 import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_IMAGES } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
+import { sendResponse } from './serviceResponse.js';
 
+/**
+ * Функция обновления желания пользователя
+ * @async
+ * @function
+ *
+ * @param {Object} user - объект пользователя
+ * @param {string} category - категория желания
+ * @param {string} id - идентификатор желания
+ * @param {string} title - заголовок желания
+ * @param {string} link - ссылка на желание
+ * @param {number} price - цена желания
+ * @param {string} image - изображение желания в формате base64
+ *
+ * @returns {Promise<string>} возвращает путь к файлу изображения желания
+ *
+ * @throws {Error} в случае, если желание не найдено
+ * или URL изображения некорректный
+ */
 const updateWish = async (user, category, id, title, link, price, image) => {
   const wishToUpdate = user.wish[category].find(item => item.id === id);
   if (!wishToUpdate) {
@@ -40,6 +59,14 @@ const updateWish = async (user, category, id, title, link, price, image) => {
   }
 };
 
+/**
+ * Функция обработки запроса на обновление желания
+ * @async
+ * @function
+ *
+ * @param {Object} req - объект запроса
+ * @param {Object} res - объект ответа
+ */
 export const handleUpdateWishRequest = async (req, res) => {
   const id = req.url.split('/')[2];
   const token = req.headers.authorization?.split(' ')[1];
@@ -48,8 +75,7 @@ export const handleUpdateWishRequest = async (req, res) => {
     const users = await readUsersFile();
     const user = users.find(user => user.id === userId);
     if (!user) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'User not found' }));
+      sendResponse(res, 404, { message: 'User not found' });
     } else {
       let body = '';
       req.on('data', chunk => {
@@ -60,18 +86,14 @@ export const handleUpdateWishRequest = async (req, res) => {
         try {
           await updateWish(user, category, id, title, link, price, image);
           await saveUsersFile(users);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(
-            JSON.stringify(user.wish[category].find(item => item.id === id)),
-          );
+          const wish = user.wish[category].find(item => item.id === id);
+          sendResponse(res, 200, wish);
         } catch (err) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: err.message }));
+          sendResponse(res, 404, { message: err.message });
         }
       });
     }
   } catch (err) {
-    res.writeHead(401, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: err.message }));
+    sendResponse(res, 401, { message: err.message });
   }
 };
