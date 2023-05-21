@@ -35,3 +35,21 @@ export const generateToken = userId => jwt.sign({ id: userId }, JWT_SECRET);
  * @throws {Error} - если токен недействительный
  */
 export const verifyToken = token => jwt.verify(token, JWT_SECRET);
+
+/**
+ * Получает login пользователя по переданному jwt токену.
+ *
+ * @param {string} token - jwt токен.
+ * @return {string} - login пользователя.
+ */
+export const getLoginFromToken = async token => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const users = await readUsersFile();
+    const user = users.find(user => user.id === decoded.id);
+    return user ? user.login : null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};

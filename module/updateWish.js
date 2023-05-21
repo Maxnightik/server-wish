@@ -54,7 +54,7 @@ const updateWish = async (user, category, id, title, link, price, image) => {
       .toBuffer();
 
     const imageFilePath = `${DATA_FOLDER_IMAGES}${id}.jpg`;
-    await fs.writeFile(imageFilePath, processedImageBuffer);
+    await fs.writeFile(`./${imageFilePath}`, processedImageBuffer);
     return imageFilePath;
   }
 };

@@ -20,7 +20,16 @@ import { sendResponse } from './serviceResponse.js';
  * @throws {Error} если переданное изображение в формате base64 некорректно
  * @throws {Error} если произошла ошибка при записи изображения в файл
  */
-const updateUser = async (user, id, login, password, birthdate, avatar) => {
+const updateUser = async (
+  user,
+  login,
+  password,
+  birthdate,
+  avatar,
+  name,
+  surname,
+  description,
+) => {
   if (login) {
     user.login = login;
   }
@@ -30,6 +39,19 @@ const updateUser = async (user, id, login, password, birthdate, avatar) => {
   if (birthdate) {
     user.birthdate = birthdate;
   }
+
+  if (name) {
+    user.name = name;
+  }
+
+  if (surname) {
+    user.surname = surname;
+  }
+
+  if (description) {
+    user.description = description;
+  }
+
   if (avatar) {
     const matches = avatar.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {
@@ -46,11 +68,13 @@ const updateUser = async (user, id, login, password, birthdate, avatar) => {
       .jpeg({ quality: 80 })
       .toBuffer();
 
-    const imageFilePath = `${DATA_FOLDER_AVATAR}${id}.jpg`;
+    const imageFilePath = `${DATA_FOLDER_AVATAR}${user.id}.jpg`;
 
     try {
-      await fs.promises.writeFile(imageFilePath, processedImageBuffer);
+      await fs.promises.writeFile(`./${imageFilePath}`, processedImageBuffer);
       user.avatar = imageFilePath;
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
     } catch (error) {
       throw new Error(`Error writing image file: ${error.message}`);
     }
@@ -81,10 +105,10 @@ export const handleUpdateUserRequest = async (req, res) => {
       body += chunk.toString();
     });
     req.on('end', async () => {
-      const { login, password, birthdate, avatar } = JSON.parse(body);
+      const data = JSON.parse(body);
       const user = users[userIndex];
       try {
-        await updateUser(user, id, login, password, birthdate, avatar);
+        await updateUser(user, ...data);
         await saveUsersFile(users);
         sendResponse(res, 200, {
           login: user.login,

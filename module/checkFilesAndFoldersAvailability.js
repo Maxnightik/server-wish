@@ -3,8 +3,8 @@ import fs from 'node:fs/promises';
 export const DATA_FILE_USERS = './users.json';
 export const DATA_FILES_PATH = [DATA_FILE_USERS];
 
-export const DATA_FOLDER_IMAGES = './images/';
-export const DATA_FOLDER_AVATAR = './avatars/';
+export const DATA_FOLDER_IMAGES = 'images/';
+export const DATA_FOLDER_AVATAR = 'avatars/';
 export const DATA_FOLDERS_PATH = [DATA_FOLDER_IMAGES, DATA_FOLDER_AVATAR];
 
 /**

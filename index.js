@@ -1,11 +1,12 @@
 import { config } from 'dotenv';
 import http from 'node:http';
 import { handleRegisterRequest } from './module/register.js';
-import { handleLoginRequest } from './module/login.js';
-import { handleWishlistRequest } from './module/getWishlist.js';
+import { handleLoginFromToken, handleLoginRequest } from './module/login.js';
+import { handleUserRequest } from './module/getUser.js';
 import { handleAddWishRequest } from './module/addWish.js';
 import { handleGetWishRequest } from './module/getWish.js';
 import { handleUpdateWishRequest } from './module/updateWish.js';
+import { handleAvatarRequest, handleImageRequest } from './module/getImage.js';
 
 export const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -36,14 +37,20 @@ const server = http.createServer(async (req, res) => {
     handleRegisterRequest(req, res);
   } else if (req.url === '/login' && req.method === 'POST') {
     handleLoginRequest(req, res);
+  } else if (req.url === '/getLogin' && req.method === 'GET') {
+    handleLoginFromToken(req, res);
   } else if (req.url === '/addWish' && req.method === 'POST') {
     handleAddWishRequest(req, res);
-  } else if (req.url.startsWith('/wishlist/') && req.method === 'GET') {
-    handleWishlistRequest(req, res);
+  } else if (req.url.startsWith('/user/') && req.method === 'GET') {
+    handleUserRequest(req, res);
   } else if (req.url.startsWith('/wish/') && req.method === 'PUT') {
     handleUpdateWishRequest(req, res);
   } else if (req.url.startsWith('/wish/') && req.method === 'GET') {
     handleGetWishRequest(req, res);
+  } else if (req.url.startsWith('/images/') && req.method === 'GET') {
+    handleImageRequest(req, res);
+  } else if (req.url.startsWith('/avatars/') && req.method === 'GET') {
+    handleAvatarRequest(req, res);
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Route not found' }));

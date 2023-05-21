@@ -13,7 +13,7 @@ import { sendResponse } from './serviceResponse.js';
  * @param {Object} res - Объект ответа.
  */
 
-export const handleWishlistRequest = async (req, res) => {
+export const handleUserRequest = async (req, res) => {
   const login = req.url.split('/')[2];
   const users = await readUsersFile();
   const user = users.find(

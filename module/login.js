@@ -1,4 +1,8 @@
-import { readUsersFile, generateToken } from './fileUtils.js';
+import {
+  readUsersFile,
+  generateToken,
+  getLoginFromToken,
+} from './fileUtils.js';
 import { sendResponse } from './serviceResponse.js';
 
 /**
@@ -32,4 +36,14 @@ export const handleLoginRequest = async (req, res) => {
       sendResponse(res, 200, { login: user.login, token });
     }
   });
+};
+
+export const handleLoginFromToken = async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const login = await getLoginFromToken(token);
+  if (!login) {
+    sendResponse(res, 401, { message: 'Invalid credentials' });
+  } else {
+    sendResponse(res, 200, { login });
+  }
 };
