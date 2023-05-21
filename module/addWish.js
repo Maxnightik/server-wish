@@ -10,7 +10,7 @@ import { sendResponse } from './serviceResponse.js';
  * @param {string} image - изображение в формате base64
  * @param {string} id - идентификатор изображения
  * @returns {Promise<string>} - путь к сохраненному файлу
- * @throws {Error} - если image не является допустимым 
+ * @throws {Error} - если image не является допустимым
  * URL-адресом данных изображения
  */
 const saveImage = async (image, id) => {
