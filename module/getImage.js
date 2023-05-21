@@ -1,9 +1,4 @@
 import fs from 'fs';
-import path from 'path';
-import {
-  DATA_FOLDER_AVATAR,
-  DATA_FOLDER_IMAGES,
-} from './checkFilesAndFoldersAvailability.js';
 
 /**
  * Обрабатывает запрос на получение картинки по пути.
