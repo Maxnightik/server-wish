@@ -29,7 +29,7 @@ export const handleLoginRequest = async (req, res) => {
       sendResponse(res, 401, { message: 'Invalid credentials' });
     } else {
       const token = generateToken(user.id);
-      sendResponse(res, 200, { token });
+      sendResponse(res, 200, { login: user.login, token });
     }
   });
 };

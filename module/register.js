@@ -1,21 +1,20 @@
 import { v4 as uuidv4 } from 'uuid';
 import { isValidLogin, isValidPassword } from './authValidation.js';
-import { readUsersFile, saveUsersFile } from './fileUtils.js';
+import { generateToken, readUsersFile, saveUsersFile } from './fileUtils.js';
 import { DATA_FOLDER_AVATAR } from './checkFilesAndFoldersAvailability.js';
 import { sendResponse } from './serviceResponse.js';
 
 /**
- * Обрабатывает запрос на регистрацию, разбирая тело запроса на учетные данные
- * для входа и пароль, проверяя их на валидность, чтение файла пользователей,
- * проверяя, занят ли логин, и либо отправляя ответ об ошибке,
- * либо создавая нового пользователя, сохраняя его в файле и отправляя
- * ответ об успехе.
+ * Обрабатывает запрос на регистрацию, разбирая тело запроса на логин и пароль,
+ * проверяя их валидность, проверяя, не существует ли уже такой логин
+ * в базе данных пользователей, и, в случае успешной валидации,
+ * создает нового пользователя с уникальным идентификатором,
+ * аватаром по умолчанию и пустым объектом желаний.
  *
- * @param {Object} req - объект запроса
- * @param {Object} res - объект ответа
- * @return {Promise<void>} Promise, который разрешается, когда ответ отправлен
+ * @param {Object} req - Объект запроса HTTP.
+ * @param {Object} res - Объект ответа HTTP.
+ * @return {Object} - Возвращает объект с данными нового пользователя.
  */
-
 export const handleRegisterRequest = async (req, res) => {
   let body = '';
   req.on('data', chunk => {
@@ -48,14 +47,14 @@ export const handleRegisterRequest = async (req, res) => {
       const newUser = {
         id: uuidv4(),
         login,
-        password,
         wish: {},
-        avatar: `${DATA_FOLDER_AVATAR}empty.jpg`,
+        avatar: `${DATA_FOLDER_AVATAR}empty.png`,
         birthdate: '',
       };
-      users.push(newUser);
+      users.push({ ...newUser, password });
       await saveUsersFile(users);
-      sendResponse(res, 201, { message: 'User created successfully' });
+      const token = generateToken(newUser.id);
+      sendResponse(res, 201, { login: newUser.login, token });
     }
   });
 };

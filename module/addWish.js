@@ -56,7 +56,7 @@ const addWishToUser = async (users, userIndex, category, wish) => {
     const imageFilePath = await saveImage(newWish.image, newWish.id);
     newWish.image = imageFilePath;
   } else {
-    newWish.image = `${DATA_FOLDER_IMAGES}empty-wish.jpg`;
+    newWish.image = `${DATA_FOLDER_IMAGES}empty.jpg`;
   }
   await saveUsersFile(users);
   return newWish;
