@@ -20,7 +20,6 @@ const findWishById = (wishList, wishId) => {
   return wishes.find(wish => wish.id === wishId);
 };
 
-
 /**
  * Обрабатывает запрос на получение информации о желании
  * @param {Object} req - объект запроса
