@@ -7,6 +7,8 @@ import { handleAddWishRequest } from './module/addWish.js';
 import { handleGetWishRequest } from './module/getWish.js';
 import { handleUpdateWishRequest } from './module/updateWish.js';
 import { handleAvatarRequest, handleImageRequest } from './module/getImage.js';
+import { handleUpdateUserRequest } from './module/updateUser.js';
+import { handleDeleteWishRequest } from './module/deleteWish.js';
 
 export const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -43,10 +45,14 @@ const server = http.createServer(async (req, res) => {
     handleAddWishRequest(req, res);
   } else if (req.url.startsWith('/user/') && req.method === 'GET') {
     handleUserRequest(req, res);
+  } else if (req.url.startsWith('/user/') && req.method === 'PUT') {
+    handleUpdateUserRequest(req, res);
   } else if (req.url.startsWith('/wish/') && req.method === 'PUT') {
     handleUpdateWishRequest(req, res);
   } else if (req.url.startsWith('/wish/') && req.method === 'GET') {
     handleGetWishRequest(req, res);
+  } else if (req.url.startsWith('/wish/') && req.method === 'DELETE') {
+    handleDeleteWishRequest(req, res);
   } else if (req.url.startsWith('/images/') && req.method === 'GET') {
     handleImageRequest(req, res);
   } else if (req.url.startsWith('/avatars/') && req.method === 'GET') {
@@ -59,4 +65,14 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+  console.log('Возможные запросы:');
+  console.log('POST /register');
+  console.log('POST /login');
+  console.log('GET /getLogin');
+  console.log('POST /addWish');
+  console.log('GET /user/:id');
+  console.log('PUT /user/:id');
+  console.log('PUT /wish/:id');
+  console.log('GET /wish/:id');
+  console.log('DELETE /wish/:id');
 });

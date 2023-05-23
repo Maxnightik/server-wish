@@ -99,7 +99,6 @@ export const handleUpdateUserRequest = async (req, res) => {
   if (userIndex === -1) {
     sendResponse(res, 404, { message: 'User not found' });
   } else {
-    const id = req.params.id;
     let body = '';
     req.on('data', chunk => {
       body += chunk.toString();
