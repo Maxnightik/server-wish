@@ -53,3 +53,8 @@ export const getLoginFromToken = async token => {
     return null;
   }
 };
+
+export const isBase64 = str => {
+  const base64Regex = /^data:image\/([A-Za-z-+/]+);base64,(.+)$/;
+  return base64Regex.test(str);
+};

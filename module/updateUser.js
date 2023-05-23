@@ -1,8 +1,14 @@
 import fs from 'fs';
-import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
+import {
+  isBase64,
+  readUsersFile,
+  saveUsersFile,
+  verifyToken,
+} from './fileUtils.js';
 import { DATA_FOLDER_AVATAR } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
 import { sendResponse } from './serviceResponse.js';
+import { log } from 'console';
 
 /**
  * Асинхронно обновляет данные пользователя
@@ -22,20 +28,8 @@ import { sendResponse } from './serviceResponse.js';
  */
 const updateUser = async (
   user,
-  login,
-  password,
-  birthdate,
-  avatar,
-  name,
-  surname,
-  description,
+  { birthdate, avatar, name, surname, description },
 ) => {
-  if (login) {
-    user.login = login;
-  }
-  if (password) {
-    user.password = password;
-  }
   if (birthdate) {
     user.birthdate = birthdate;
   }
@@ -52,22 +46,25 @@ const updateUser = async (
     user.description = description;
   }
 
-  if (avatar) {
+  if (avatar && isBase64(avatar)) {
     const matches = avatar.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
+    console.log('ava');
     if (!matches || matches.length !== 3) {
+      console.log('Invalid image data URL');
       throw new Error('Invalid image data URL');
     }
     const base64Data = matches[2];
-
     const MAX_IMAGE_SIZE = 500;
-
     const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
-      .resize({ width: MAX_IMAGE_SIZE, height: MAX_IMAGE_SIZE, fit: 'contain' })
-      .background({ r: 255, g: 255, b: 255, alpha: 1 })
+      .resize({
+        width: MAX_IMAGE_SIZE,
+        height: MAX_IMAGE_SIZE,
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 },
+      })
       .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
       .jpeg({ quality: 80 })
       .toBuffer();
-
     const imageFilePath = `${DATA_FOLDER_AVATAR}${user.id}.jpg`;
 
     try {
@@ -76,8 +73,13 @@ const updateUser = async (
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
+      console.log(error);
       throw new Error(`Error writing image file: ${error.message}`);
     }
+  }
+
+  if (avatar && avatar.includes('empty')) {
+    user.avatar = `${DATA_FOLDER_AVATAR}empty.png`;
   }
 };
 
@@ -107,7 +109,7 @@ export const handleUpdateUserRequest = async (req, res) => {
       const data = JSON.parse(body);
       const user = users[userIndex];
       try {
-        await updateUser(user, ...data);
+        await updateUser(user, data);
         await saveUsersFile(users);
         sendResponse(res, 200, {
           login: user.login,

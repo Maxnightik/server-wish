@@ -8,7 +8,6 @@ import fs from 'fs';
  * @return {void} - Функция ничего не возвращает.
  */
 export const handleImageRequest = (req, res) => {
-  console.log('req.url: ', req.url);
   const imageStream = fs.createReadStream(`./${req.url}`);
 
   imageStream.on('error', err => {
@@ -22,7 +21,6 @@ export const handleImageRequest = (req, res) => {
 };
 
 export const handleAvatarRequest = (req, res) => {
-  console.log('req.url: ', req.url);
 
   const imageStream = fs.createReadStream(`./${req.url}`);
 

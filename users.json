@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "b8a6083f-4ee6-4e1f-af71-512989fa5856",
+    "login": "Quper",
+    "wish": {},
+    "avatar": "avatars/empty.png",
+    "birthdate": "10/3/1987",
+    "password": "123456Qq!",
+    "name": "Максим",
+    "surname": "Лескин",
+    "description": "Подари мне что-нибудь из списка ниже"
+  }
+]

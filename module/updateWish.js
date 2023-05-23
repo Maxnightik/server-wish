@@ -47,8 +47,12 @@ const updateWish = async (user, category, id, title, link, price, image) => {
     const MAX_IMAGE_SIZE = 500;
 
     const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
-      .resize({ width: MAX_IMAGE_SIZE, height: MAX_IMAGE_SIZE, fit: 'contain' })
-      .background({ r: 255, g: 255, b: 255, alpha: 1 })
+      .resize({
+        width: MAX_IMAGE_SIZE,
+        height: MAX_IMAGE_SIZE,
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 },
+      })
       .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
       .jpeg({ quality: 80 })
       .toBuffer();
