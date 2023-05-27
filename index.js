@@ -68,11 +68,11 @@ server.listen(PORT, () => {
   console.log('Возможные запросы:');
   console.log('POST /register');
   console.log('POST /login');
-  console.log('GET /getLogin');
-  console.log('POST /addWish');
-  console.log('GET /user/:id');
-  console.log('PUT /user/:id');
-  console.log('PUT /wish/:id');
-  console.log('GET /wish/:id');
-  console.log('DELETE /wish/:id');
+  console.log('GET /getLogin Autorization');
+  console.log('POST /addWish Autorization');
+  console.log('GET /user/:login');
+  console.log('PUT /user/ Autorization');
+  console.log('PUT /wish/:id Autorization');
+  console.log('GET /wish/:id Autorization');
+  console.log('DELETE /wish/:id Autorization');
 });

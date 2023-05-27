@@ -3,6 +3,7 @@ import { readUsersFile, saveUsersFile, verifyToken } from './fileUtils.js';
 import { DATA_FOLDER_IMAGES } from './checkFilesAndFoldersAvailability.js';
 import sharp from 'sharp';
 import { sendResponse } from './serviceResponse.js';
+import { log } from 'node:console';
 
 /**
  * Функция обновления желания пользователя
@@ -36,6 +37,7 @@ const updateWish = async (user, category, id, title, link, price, image) => {
   if (price) {
     wishToUpdate.price = price;
   }
+  console.log(!!image);
   if (image) {
     const matches = image.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {
@@ -59,7 +61,9 @@ const updateWish = async (user, category, id, title, link, price, image) => {
 
     const imageFilePath = `${DATA_FOLDER_IMAGES}${id}.jpg`;
     await fs.writeFile(`./${imageFilePath}`, processedImageBuffer);
-    return imageFilePath;
+    wishToUpdate.image = imageFilePath;
+  } else {
+    wishToUpdate.image = `${DATA_FOLDER_IMAGES}empty.jpg`;
   }
 };
 

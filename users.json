@@ -1,13 +1,56 @@
 [
   {
-    "id": "b8a6083f-4ee6-4e1f-af71-512989fa5856",
-    "login": "Quper",
+    "id": "d8a57915-16f5-4ed8-a783-39f623217fc9",
+    "login": "Maks",
     "wish": {},
-    "avatar": "avatars/empty.png",
-    "birthdate": "10/3/1987",
-    "password": "123456Qq!",
+    "avatar": "avatars/d8a57915-16f5-4ed8-a783-39f623217fc9.jpg",
+    "birthdate": "",
+    "password": "123456Aa",
+    "name": "Алексей",
+    "surname": "Иванов",
+    "description": "undefined"
+  },
+  {
+    "id": "0369af76-218e-4ac0-bf22-0fa9cd842d57",
+    "login": "Maksim",
+    "wish": {},
+    "avatar": "avatars/0369af76-218e-4ac0-bf22-0fa9cd842d57.jpg",
+    "birthdate": "3/10/1987",
+    "password": "123456Aa",
     "name": "Максим",
     "surname": "Лескин",
-    "description": "Подари мне что-нибудь из списка ниже"
+    "description": "Привет"
+  },
+  {
+    "id": "73d1b883-1c40-4e75-a94b-6505523013dc",
+    "login": "QuperPuper",
+    "wish": {
+      "Гаджеты": [
+        {
+          "id": "ee0dfed4-f3c5-46fb-a60a-e5ca49fbe7c3",
+          "title": "Микрофон HyperX DuoCast",
+          "category": "Гаджеты",
+          "price": "8999",
+          "currency": "RUB",
+          "link": "https://www.dns-shop.ru/product/cb7212b6fe7eed20/mikrofon-hyperx-duocast-cernyj/?utm_referrer=https%3A%2F%2Fwantr.ru%2F",
+          "image": "images/ee0dfed4-f3c5-46fb-a60a-e5ca49fbe7c3.jpg"
+        },
+        {
+          "id": "1ccd8e41-124e-431b-a9c8-a56818fd190e",
+          "title": "Наушники Xiaomi Capsule Earphones Pro",
+          "category": "Гаджеты",
+          "price": "1500",
+          "currency": "RUB",
+          "link": "https://market.yandex.ru/product--provodnye-naushniki-xiaomi-capsule-earphones-pro-3-knopki-pozolochennyi-shteker-3-5-provod-1-25m-x16-chernyi/1776069523?cpa=1",
+          "image": "images/1ccd8e41-124e-431b-a9c8-a56818fd190e.jpg"
+        }
+      ]
+    },
+    "avatar": "avatars/73d1b883-1c40-4e75-a94b-6505523013dc.jpg",
+    "birthdate": "6/6/1991",
+    "password": "123456Aa",
+    "name": "Иван",
+    "surname": "Пупыркин",
+    "description": "Текстик"
   }
 ]

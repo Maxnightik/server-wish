@@ -14,8 +14,6 @@ export const isValidLogin = login => {
  * @returns {boolean} - true, если пароль допустим, и false в противном случае
  */
 export const isValidPassword = password => {
-  const passwordRegex =
-    // eslint-disable-next-line
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!\"№;%:?*()_+])[a-zA-Z\d!\"№;%:?*()_+]{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
   return passwordRegex.test(password);
 };

@@ -24,8 +24,12 @@ const saveImage = async (image, id) => {
   const MAX_IMAGE_SIZE = 500;
 
   const processedImageBuffer = await sharp(Buffer.from(base64Data, 'base64'))
-    .resize({ width: MAX_IMAGE_SIZE, height: MAX_IMAGE_SIZE, fit: 'contain' })
-    .background({ r: 255, g: 255, b: 255, alpha: 1 })
+    .resize({
+      width: MAX_IMAGE_SIZE,
+      height: MAX_IMAGE_SIZE,
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
     .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
     .jpeg({ quality: 80 })
     .toBuffer();
@@ -44,14 +48,15 @@ const saveImage = async (image, id) => {
  * @param {Object} wish - объект желания
  * @returns {Promise<Object>} - добавленное желание
  */
-const addWishToUser = async (users, userIndex, category, wish) => {
+const addWishToUser = async (users, userIndex, wish) => {
   const newWish = { id: uuidv4(), ...wish };
   const user = users[userIndex];
-  if (user.wish[category]) {
-    user.wish[category].push(newWish);
+  if (user.wish[wish.category]) {
+    user.wish[wish.category].push(newWish);
   } else {
-    user.wish[category] = [newWish];
+    user.wish[wish.category] = [newWish];
   }
+
   if (newWish.image) {
     const imageFilePath = await saveImage(newWish.image, newWish.id);
     newWish.image = imageFilePath;
@@ -73,7 +78,7 @@ export const handleAddWishRequest = (req, res) => {
     body += chunk.toString();
   });
   req.on('end', async () => {
-    const { category, ...wish } = JSON.parse(body);
+    const wish = JSON.parse(body);
     const token = req.headers.authorization?.split(' ')[1];
     try {
       const { id } = verifyToken(token);
@@ -82,8 +87,8 @@ export const handleAddWishRequest = (req, res) => {
       if (userIndex < 0) {
         throw new Error('User not found');
       }
-      const newWish = await addWishToUser(users, userIndex, category, wish);
-      sendResponse(res, 201, { category, ...newWish });
+      const newWish = await addWishToUser(users, userIndex, wish);
+      sendResponse(res, 201, newWish);
     } catch (err) {
       sendResponse(res, 401, { message: err.message });
     }
