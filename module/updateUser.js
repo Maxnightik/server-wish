@@ -48,7 +48,6 @@ const updateUser = async (
 
   if (avatar && isBase64(avatar)) {
     const matches = avatar.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
-    console.log('ava');
     if (!matches || matches.length !== 3) {
       console.log('Invalid image data URL');
       throw new Error('Invalid image data URL');
@@ -76,9 +75,7 @@ const updateUser = async (
       console.log(error);
       throw new Error(`Error writing image file: ${error.message}`);
     }
-  }
-
-  if (avatar && avatar.includes('empty')) {
+  } else if ((avatar && avatar.includes('empty')) || avatar === '') {
     user.avatar = `${DATA_FOLDER_AVATAR}empty.png`;
   }
 };
