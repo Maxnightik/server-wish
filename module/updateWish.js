@@ -23,7 +23,7 @@ import { log } from 'node:console';
  * @throws {Error} в случае, если желание не найдено
  * или URL изображения некорректный
  */
-const updateWish = async (user, category, id, title, link, price, image) => {
+const updateWish = async (user, category, id, title, link, price, image, currency) => {
   const wishToUpdate = user.wish[category].find(item => item.id === id);
   if (!wishToUpdate) {
     throw new Error('Wish not found');
@@ -37,11 +37,14 @@ const updateWish = async (user, category, id, title, link, price, image) => {
   if (price) {
     wishToUpdate.price = price;
   }
-  console.log(!!image);
+  if (currency) {
+    wishToUpdate.currency = currency;
+  }
+
   if (image) {
     const matches = image.match(/^data:image\/([A-Za-z-+/]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {
-      throw new Error('Invalid image data URL');
+      return;
     }
 
     const base64Data = matches[2];
@@ -90,9 +93,9 @@ export const handleUpdateWishRequest = async (req, res) => {
         body += chunk.toString();
       });
       req.on('end', async () => {
-        const { category, title, link, price, image } = JSON.parse(body);
+        const { category, title, link, price, image, currency } = JSON.parse(body);
         try {
-          await updateWish(user, category, id, title, link, price, image);
+          await updateWish(user, category, id, title, link, price, image, currency);
           await saveUsersFile(users);
           const wish = user.wish[category].find(item => item.id === id);
           sendResponse(res, 200, wish);
